@@ -1,0 +1,27 @@
+version: "3.9"
+services:
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_DATABASE: facetflow
+      MYSQL_USER: facetflow_user
+      MYSQL_PASSWORD: SuperSecure#123
+      MYSQL_ROOT_PASSWORD: rootpass
+    ports: ["3306:3306"]
+    command: ["--default-authentication-plugin=mysql_native_password","--character-set-server=utf8mb4","--collation-server=utf8mb4_unicode_ci"]
+    healthcheck:
+      test: ["CMD","mysqladmin","ping","-h","localhost"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  api:
+    build: .
+    environment:
+      DATABASE_URL: mysql+pymysql://facetflow_user:SuperSecure#123@db:3306/facetflow?charset=utf8mb4
+      SESSION_SECRET: change-me
+      JWT_SECRET: change-me
+    depends_on:
+      db:
+        condition: service_healthy
+    ports: ["8080:8080"]
