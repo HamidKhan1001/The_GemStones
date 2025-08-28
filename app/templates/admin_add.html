@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Admin – Add Item</title>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <header><h1>Add a Gemstone</h1></header>
+  <main>
+    <form action="/admin/add" method="post">
+      <label>Name: <input type="text" name="name" required></label><br>
+      <label>Description:<br>
+        <textarea name="description"></textarea>
+      </label><br>
+      <label>Price: <input type="number" step="0.01" name="price" required></label><br>
+      <label>Image URL: <input type="url" name="image_url"></label><br>
+      <button type="submit">Add Item</button>
+    </form>
+    <!-- auction_admin.html -->
+<form method="post" action="/admin/auction/{{ item.id }}">
+  <label>
+    <input type="checkbox" name="auction_live" {% if item.auction_live %}checked{% endif %}>
+    Enable Live Auction
+  </label>
+  <div>
+    <label>YouTube Channel ID (for live embed):</label>
+    <input type="text" name="youtube_channel" value="{{ item.youtube_channel or '' }}">
+  </div>
+  <div>
+    <label>Fallback Image URL:</label>
+    <input type="text" name="fallback_image" value="{{ item.fallback_image or item.image_url }}">
+  </div>
+  <button type="submit">Save Auction Settings</button>
+</form>
+
+  </main>
+</body>
+</html>

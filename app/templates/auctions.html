@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <title>Auction: {{ item.name }}</title>
+  <link rel="stylesheet" href="{{ request.url_for('static', path='styles.css') }}">
+  <style>
+    .video-container { position: relative; padding-bottom:56.25%; height:0; overflow:hidden; }
+    .video-container iframe { position:absolute; top:0; left:0; width:100%; height:100%; }
+    #feed { list-style:none; max-height:200px; overflow-y:auto; padding:0; margin:1rem 0; }
+    #feed li { padding:.25rem .5rem; border-bottom:1px solid #eee; }
+    #bid-area { display:flex; gap:.5rem; align-items:center; }
+    #bid-area button { padding:.5rem 1rem; }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <a href="/">← Back</a> | Auction: {{ item.name }}
+  </nav>
+
+  <!-- 1) Embed live if set, else static fallback -->
+  <div class="video-container">
+    {% if item.youtube_channel %}
+      <iframe src="https://www.youtube.com/embed/live_stream?channel={{ item.youtube_channel }}"
+              allow="autoplay; encrypted-media"
+              allowfullscreen>
+      </iframe>
+    {% else %}
+      <img src="{{ item.fallback_image or item.image_url }}" style="width:100%;height:auto;">
+    {% endif %}
+  </div>
+
+  <!-- 2) Current high bid -->
+  <p>Current High Bid: <strong>$<span id="highest">0</span></strong></p>
+
+  <!-- 3) Bid feed -->
+  <ul id="feed"></ul>
+
+  <!-- 4) Bid controls: ±5, ±10 -->
+  <div id="bid-area">
+    <button id="minus10">–$10</button>
+    <button id="minus5">–$5</button>
+    <input type="text" id="bidInput" readonly value="0">
+    <button id="plus5">+$5</button>
+    <button id="plus10">+$10</button>
+    <button id="bidBtn">Place Bid</button>
+  </div>
+
+  <script>
+    // WebSocket
+    const ws = new WebSocket(`ws://${location.host}/ws/auction/{{ item.id }}?token={{ user_token }}`);
+    ws.onmessage = e => {
+      const m = JSON.parse(e.data);
+      if (m.type === "init") {
+        document.getElementById("highest").textContent = m.highest.toFixed(2);
+        document.getElementById("bidInput").value   = m.highest.toFixed(2);
+      }
+      else if (m.type === "new_bid") {
+        document.getElementById("highest").textContent = m.amount.toFixed(2);
+        document.getElementById("bidInput").value     = m.amount.toFixed(2);
+
+        const li = document.createElement("li");
+        li.textContent = `${m.user} → $${m.amount.toFixed(2)}`;
+        document.getElementById("feed").prepend(li);
+      }
+      else if (m.type === "error") {
+        alert(m.msg);
+      }
+    };
+
+    // Increment / decrement
+    function adjust(delta) {
+      const inp = document.getElementById("bidInput");
+      let v = parseFloat(inp.value) + delta;
+      if (v < 0) v = 0;
+      inp.value = v.toFixed(2);
+    }
+    document.getElementById("minus10").onclick = () => adjust(-10);
+    document.getElementById("minus5").onclick  = () => adjust(-5);
+    document.getElementById("plus5").onclick   = () => adjust(5);
+    document.getElementById("plus10").onclick  = () => adjust(10);
+
+    // Place bid
+    document.getElementById("bidBtn").onclick = () => {
+      let amt = parseFloat(document.getElementById("bidInput").value);
+      if (isNaN(amt) || amt <= 0) return alert("Enter a valid bid");
+      ws.send(JSON.stringify({ bid: amt }));
+    };
+  </script>
+</body>
+</html>

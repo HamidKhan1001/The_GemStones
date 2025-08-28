@@ -1,0 +1,498 @@
+/* ───── Reset & Base ───── */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; font-family: Arial, sans-serif; color: #333; display: flex; flex-direction: column; }
+main { flex: 1; }
+img { max-width: 100%; display: block; }
+
+/* ───── NAVBAR ───── */
+.navbar {
+  background: #004d40; color: #fff; padding: 1rem 2rem;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.navbar .logo { font-size: 1.5rem; font-weight: bold; }
+.nav-links { list-style: none; display: flex; align-items: center; }
+.nav-links li { margin-left: 1.5rem; position: relative; }
+.nav-links a {
+  color: #fff; text-decoration: none; font-size: 1rem;
+}
+.nav-links a:hover { text-decoration: underline; }
+
+/* ───── Profile Dropdown ───── */
+.avatar {
+  width: 32px; height: 32px; background: #00796b; color: #fff;
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-weight: bold; text-transform: uppercase;
+}
+.dropdown-menu {
+  position: absolute; top: 120%; right: 0;
+  background: #fff; padding: 0.5rem 0; border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15); min-width: 160px;
+  display: none;
+}
+.nav-item.open .dropdown-menu { display: block; }
+.dropdown-menu li { list-style: none; }
+.dropdown-menu a {
+  display: block; padding: 0.5rem 1rem; color: #333;
+  text-decoration: none;
+}
+.dropdown-menu a:hover { background: #f0f0f0; }
+
+/* ───── TOUR MODAL ───── */
+.modal { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); display:flex; align-items:center; justify-content:center; z-index:2000; }
+.modal-content {
+  background:#fff; padding:2rem; border-radius:6px; max-width:320px; width:90%;
+  text-align:center;
+}
+.modal-content button {
+  background:#00796b; color:#fff; border:none; padding:0.5rem 1rem;
+  margin:0.5rem; border-radius:4px; cursor:pointer;
+}
+.modal-content button:hover { opacity:0.9; }
+
+/* ───── Container, Grid & Cards ───── */
+.container { max-width:1200px; margin:2rem auto; padding:0 1rem; }
+.grid {
+  display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:1.5rem; margin-bottom:2rem;
+}
+.card {
+  background:#fff; border-radius:6px; box-shadow:0 2px 6px rgba(0,0,0,0.1);
+  overflow:hidden; text-align:center; padding:1rem;
+}
+.card h3 { margin:0.75rem 0; font-size:1.1rem; }
+.price { color:#00796b; font-weight:bold; }
+
+/* ───── Forms ───── */
+.form-section { padding:2rem 1rem; }
+.form {
+  background:#fff; padding:2rem; max-width:400px; margin:0 auto;
+  border-radius:6px; box-shadow:0 2px 8px rgba(0,0,0,0.1);
+}
+.form input, .form textarea {
+  width:100%; padding:0.75rem; margin-bottom:1rem;
+  border:1px solid #ccc; border-radius:4px; font-size:1rem;
+}
+.form input:focus, .form textarea:focus {
+  border-color:#00796b; outline:none;
+}
+.form button {
+  width:100%; padding:0.75rem; background:#00796b;
+  color:#fff; border:none; border-radius:4px; font-size:1rem; cursor:pointer;
+}
+.form button:hover { background:#005a47; }
+
+/* ───── Sections ───── */
+.section { padding:4rem 1rem; text-align:center; }
+.section h2 {
+  font-size:2rem; margin-bottom:1rem; color:#00796b;
+}
+.section p { font-size:1rem; line-height:1.6; margin-bottom:1.5rem; }
+.why-us ul { list-style:none; padding:0; }
+.why-us li {
+  margin:0.75rem 0; padding-left:1.5rem; position:relative;
+  font-size:1rem;
+}
+.why-us li::before {
+  content:"✔"; position:absolute; left:0; color:#00796b;
+}
+
+/* ───── Payment Icons ───── */
+.payment-icons {
+  display:flex; flex-wrap:wrap; justify-content:center; gap:1rem; margin-top:1rem;
+}
+.payment-icons img {
+  width:48px; opacity:0.8; transition:opacity 0.2s;
+}
+.payment-icons img:hover { opacity:1; }
+
+/* ───── Quick‑Links (Dashboard) ───── */
+.quick-links {
+  display:flex; gap:1rem; margin-top:1rem; justify-content:center;
+}
+.quick-links a {
+  background:#00796b; color:#fff; padding:0.75rem 1.5rem;
+  border-radius:4px; text-decoration:none;
+}
+.quick-links a:hover { background:#005a47; }
+
+/* ───── Footer ───── */
+.site-footer {
+  background:#004d40; color:#fff; padding:2rem 1rem;
+}
+.footer-content {
+  max-width:1000px; margin:0 auto; display:flex; justify-content:space-between; flex-wrap:wrap;
+}
+.footer-links { list-style:none; display:flex; }
+.footer-links li { margin-left:1rem; }
+.footer-links a { color:#fff; text-decoration:none; }
+.footer-links a:hover { text-decoration:underline; }
+
+/* ───── Chatbot ───── */
+.chatbot {
+  position:fixed; bottom:1rem; right:1rem; width:300px;
+  background:#00796b; border-radius:8px; overflow:hidden;
+  box-shadow:0 4px 12px rgba(0,0,0,0.2); transition:transform 0.3s;
+}
+.chatbot.minimized { transform:translateY(80%); }
+.chatbot-header {
+  padding:0.75rem 1rem; display:flex; justify-content:space-between; align-items:center; background:#005a47; color:#fff;
+}
+.toggle-btn { cursor:pointer; font-size:1.2rem; }
+.chatbot-body {
+  background:#fff; height:200px; overflow-y:auto; padding:0.5rem;
+}
+.chatbot-input {
+  display:flex; border-top:1px solid #ccc;
+}
+.chatbot-input input {
+  flex:1; border:none; padding:0.75rem;
+}
+.chatbot-input button {
+  background:#005a47; border:none; color:#fff; padding:0 1rem; cursor:pointer;
+}
+.chatbot-input button:hover { opacity:0.9; }
+.bot {
+  background:#e0f2f1; margin:0.25rem 0; padding:0.5rem; border-radius:4px;
+}
+.bot.tour { background:#b2dfdb; }
+.bot.error { background:#ffebee; }
+.user {
+  text-align:right; font-style:italic; margin:0.25rem 0;
+}
+/* ───── Latest Product Popup ───── */
+#latestModal {
+  display: none;
+  position: fixed; top:0; left:0;
+  width:100%; height:100%;
+  background:rgba(0,0,0,0.5);
+  align-items:center; justify-content:center;
+  z-index:2000;
+}
+.modal-content.latest-popup {
+  background:#fff; padding:2rem; border-radius:8px;
+  max-width:400px; width:90%; text-align:center;
+}
+.modal-content.latest-popup img {
+  max-height:200px; margin:1rem 0; border-radius:4px;
+}
+.modal-content.latest-popup button {
+  background:#00796b; color:#fff; border:none;
+  padding:0.5rem 1rem; border-radius:4px; cursor:pointer;
+}
+.modal-content.latest-popup button:hover {
+  background:#005a47;
+}
+
+/* ───── Hot Gems Section ───── */
+.hot-gems {
+  padding:2rem 1rem; background:#f7f7f7; margin-bottom:2rem;
+}
+.hot-gems h2 {
+  text-align:center; color:#00796b; margin-bottom:1rem;
+}
+.hot-gems .grid {
+  gap:1rem;
+}
+.hot-gems .card h3 {
+  font-size:1rem; margin-top:0.5rem;
+}
+
+.card .actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+.card .actions button {
+  flex: 1;
+  padding: 0.5rem;
+  cursor: pointer;
+  border: none;
+  background: #0052cc;
+  color: white;
+  border-radius: 3px;
+}
+.card .actions button.buy-now {
+  background: #28a745;
+}
+.nav-item.cart {
+  position: relative;
+}
+.nav-item.cart .badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: red;
+  color: white;
+  font-size: 0.7rem;
+  padding: 2px 5px;
+  border-radius: 50%;
+}
+/* ─── Cart Sidebar ─────────────────────────────────────────────────────────── */
+.cart-sidebar {
+  position: fixed;
+  top: 0;
+  right: -320px;              /* start hidden off-screen */
+  width: 300px;
+  height: 100%;
+  background: #fff;
+  box-shadow: -4px 0 8px rgba(0,0,0,0.1);
+  transition: right 0.25s ease;
+  z-index: 1000;
+  padding: 1rem;
+  overflow-y: auto;
+}
+.cart-sidebar.open {
+  right: 0;
+}
+.cart-sidebar .close-btn {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background: none;
+  border: none;
+  font-size: 1.25rem;
+  cursor: pointer;
+}
+
+/* ─── Navbar cart icon ─────────────────────────────────────────────────────── */
+.nav-item.cart {
+  position: relative;
+  margin-left: 1rem;
+}
+.nav-item.cart .badge {
+  position: absolute;
+  top: -6px;
+  right: -10px;
+  background: red;
+  color: white;
+  font-size: 0.7rem;
+  padding: 2px 6px;
+  border-radius: 50%;
+}
+
+/* ─── Checkout button in sidebar ───────────────────────────────────────────── */
+#checkoutSidebar {
+  display: block;
+  width: 100%;
+  padding: 0.5rem;
+  margin-top: 1rem;
+  background: #0052cc;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+#checkoutSidebar:hover {
+  background: #003d99;
+}
+/* ─── Live Auction Page ─────────────────────────────────────────────────────── */
+.auction-container {
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: 1rem;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+.auction-header {
+  margin-bottom: 1rem;
+}
+.auction-header h1 {
+  margin: 0;
+  font-size: 1.75rem;
+  color: #00502b;
+}
+.highest-bid {
+  font-size: 1.5rem;
+  margin: 0.5rem 0 1rem;
+  color: #333;
+}
+.bid-input-group {
+  display: flex;
+  margin-bottom: 1rem;
+}
+.bid-input-group input[type="number"] {
+  flex: 1;
+  padding: 0.5rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-right: none;
+  border-radius: 4px 0 0 4px;
+}
+.bid-input-group button {
+  padding: 0 1rem;
+  font-size: 1rem;
+  border: none;
+  background: #00502b;
+  color: #fff;
+  border-radius: 0 4px 4px 0;
+  cursor: pointer;
+}
+.bid-input-group button:hover {
+  background: #003d1a;
+}
+.bid-feed {
+  list-style: none;
+  padding: 0;
+  max-height: 300px;
+  overflow-y: auto;
+  border: 1px solid #eee;
+  border-radius: 4px;
+}
+.bid-feed li {
+  padding: 0.5rem;
+  border-bottom: 1px solid #eee;
+  font-size: 0.9rem;
+  color: #333;
+}
+.bid-feed li:last-child {
+  border-bottom: none;
+}
+
+/* ─── In-App Chat Page ───────────────────────────────────────────────────────── */
+.chat-container {
+  max-width: 600px;
+  margin: 2rem auto;
+  display: flex;
+  flex-direction: column;
+  height: 80vh;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  overflow: hidden;
+}
+.chat-header {
+  padding: 1rem;
+  background: #00502b;
+  color: #fff;
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+.chat-messages {
+  flex: 1;
+  padding: 1rem;
+  overflow-y: auto;
+  background: #f9f9f9;
+}
+.chat-messages .message {
+  margin-bottom: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 4px;
+  max-width: 70%;
+  word-wrap: break-word;
+  line-height: 1.4;
+}
+.chat-messages .message--self {
+  margin-left: auto;
+  background: #d1e7dd;
+  color: #0f5132;
+}
+.chat-messages .message--other {
+  margin-right: auto;
+  background: #e2e3e5;
+  color: #41464b;
+}
+.chat-input-group {
+  display: flex;
+  border-top: 1px solid #ddd;
+}
+.chat-input-group input[type="text"] {
+  flex: 1;
+  padding: 0.75rem;
+  border: none;
+  outline: none;
+  font-size: 1rem;
+}
+.chat-input-group button {
+  padding: 0.75rem 1rem;
+  border: none;
+  background: #00502b;
+  color: #fff;
+  cursor: pointer;
+}
+.chat-input-group button:hover {
+  background: #003d1a;
+}
+/* ─── Chat page ───────────────────────────────────────────────────────────── */
+.chat-container {
+  max-width: 800px;
+  margin: 2rem auto;
+  display: flex;
+  flex-direction: column;
+  height: 80vh;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.chat-header {
+  display: flex;
+  align-items: center;
+  background: #004d40;     /* your primary dark‐green */
+  color: #fff;
+  padding: 1rem;
+  border-radius: 8px 8px 0 0;
+  font-size: 1.25rem;
+}
+
+.chat-header a {
+  color: #ffc107;          /* accent color (amber) */
+  text-decoration: none;
+  margin-right: 1rem;
+  font-size: 0.9rem;
+}
+
+.chat-messages {
+  flex: 1;
+  padding: 1rem;
+  overflow-y: auto;
+  background: #f9f9f9;
+}
+
+.chat-messages .message {
+  margin-bottom: 0.75rem;
+}
+
+.chat-messages .message .sender {
+  font-weight: 600;
+  margin-right: 0.5rem;
+  color: #004d40;
+}
+
+.chat-input {
+  display: flex;
+  border-top: 1px solid #ddd;
+}
+
+.chat-input input {
+  flex: 1;
+  border: none;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+}
+
+.chat-input input:focus {
+  outline: none;
+}
+
+.chat-input button {
+  background: #00796b;     /* a slightly lighter green */
+  border: none;
+  color: #fff;
+  padding: 0 1.5rem;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.chat-input button:hover {
+  background: #005a4f;
+}
+.btn.live-auction {
+  background: #c0392b;
+  color: white;
+  padding: .5rem 1rem;
+  border-radius: 4px;
+  text-decoration: none;
+}
+.btn.live-auction:hover {
+  background: #e74c3c;
+}

@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>IK Minerals</title>
+  <link rel="stylesheet" href="{{ request.url_for('static', path='styles.css') }}"/>
+  <link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+  integrity="…"
+  crossorigin="anonymous"
+/>
+
+</head>
+<body>
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="logo">IK Minerals</div>
+    <ul class="nav-links">
+      <li><a href="/">Home</a></li>
+      {% if user %}
+        <li><a href="/dashboard">Dashboard</a></li>
+        {% if user.is_admin %}
+          <li><a href="/admin/add">Add Gemstone</a></li>
+        {% endif %}
+          <!-- ————— New “Chat Admin” link ————— -->
+  <li class="nav-item chat">
+        <li><a href="/auctions"><i class="fas fa-gavel"></i> Auctions</a></li>
+    <a href="/chat/user_{{ user.id }}_admin">
+      <i class="fas fa-comments"></i> Chat Admin
+    </a>
+  </li>
+        <li class="nav-item profile">
+          <div class="avatar">{{ (user.first_name or user.username)[0] }}</div>
+          <ul class="dropdown-menu">
+            <li><a href="/profile">Profile</a></li>
+            <li><a href="/verify-email">Verify Email</a></li>
+            <li><a href="/settings">Account Settings</a></li>
+            <li><a href="/logout">Logout</a></li>
+          </ul>
+        </li>
+      {% else %}
+        <li><a href="/login">Login</a></li>
+        <li><a href="/signup">Sign Up</a></li>
+   
+        <aside id="cartSidebar" class="cart-sidebar">
+  <button id="closeCart" class="close-btn">&times;</button>
+  <h2>Your Cart</h2>
+  <ul id="sidebarCartItems"></ul>
+  <div class="cart-total">Total: $<span id="sidebarCartTotal">0.00</span></div>
+  <button id="checkoutSidebar">Checkout</button>
+</aside>
+
+<li class="nav-item cart">
+  <a href="#" id="cartToggle">
+    <i class="fas fa-shopping-cart"></i>
+    <span id="cart-count" class="badge">0</span>
+  </a>
+</li>
+
+
+      {% endif %}
+    </ul>
+  </nav>
+
+  <!-- TOUR PROMPT MODAL -->
+  {% if show_tour_prompt %}
+  <div id="tourModal" class="modal">
+    <div class="modal-content">
+      <p>Welcome to IK Minerals! Would you like a quick site tour?</p>
+      <button id="tourYes">Yes, show me</button>
+      <button id="tourNo">No, thanks</button>
+    </div>
+  </div>
+  {% endif %}
+
+ <main class="container">
+  {# ───── Home ───── #}
+  {% if page == "home" %}
+
+    {# Latest Product Popup ───── #}
+    {% if latest_item %}
+      <div id="latestModal" class="modal">
+        <div class="modal-content latest-popup">
+          <h3>New Arrival: {{ latest_item.name }}</h3>
+          {% if latest_item.image_url %}
+            <img src="{{ latest_item.image_url }}" alt="{{ latest_item.name }}"/>
+          {% endif %}
+          <p>{{ latest_item.description or "No description available." }}</p>
+          <button id="closeLatest">Close</button>
+        </div>
+      </div>
+    {% endif %}
+
+    {# Hot Gems ───── #}
+    <section class="section hot-gems">
+      <h2>Hot Gems</h2>
+      <div class="grid">
+        {% for gem in hot_items %}
+          <div class="card" data-item-id="{{ gem.id }}">
+            {% if gem.image_url %}
+              <img src="{{ gem.image_url }}" alt="{{ gem.name }}"/>
+            {% endif %}
+            <h3>{{ gem.name }}</h3>
+            <p>{{ gem.description or "No description available." }}</p>
+            <p class="price">${{ "%.2f"|format(gem.price) }}</p>
+            <div class="actions">
+          +    {% if gem.auction_live %}
+      <a href="/auction/{{ gem.id }}" class="btn live-auction">🔴 Live Auction</a>
+    {% else %}
+      <button class="add-to-cart">Add to Cart</button>
+      <button class="buy-now">Buy Now</button>
+   {% endif %}
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </section>
+
+    {# All Items Grid ───── #}
+    <section class="grid">
+      {% for item in items %}
+        <div class="card" data-item-id="{{ item.id }}">
+          {% if item.image_url %}
+            <img src="{{ item.image_url }}" alt="{{ item.name }}"/>
+          {% endif %}
+          <h3>{{ item.name }}</h3>
+          <p>{{ item.description or "No description available." }}</p>
+          <p class="price">${{ "%.2f"|format(item.price) }}</p>
+          <div class="actions">
+            <button class="add-to-cart">Add to Cart</button>
+            <button class="buy-now">Buy Now</button>
+          </div>
+        </div>
+      {% else %}
+        <p>No gemstones found.</p>
+      {% endfor %}
+    </section>
+
+    {# About Us ───── #}
+    <section class="section about">
+      <h2>About Us</h2>
+      <p>
+        We’re IK Minerals, a family-run business sourcing the world’s finest natural gemstones
+        straight from ethical mines. Our passion is quality &amp; transparency—so you always know
+        exactly what you’re getting.
+      </p>
+    </section>
+
+    {# Why Choose Us ───── #}
+    <section class="section why-us">
+      <h2>Why Choose Us?</h2>
+      <ul>
+        <li>Ethically sourced gemstones</li>
+        <li>Fast, insured shipping worldwide</li>
+        <li>30-day money-back guarantee</li>
+        <li>Expert customer support</li>
+      </ul>
+    </section>
+
+    {# Payment Methods ───── #}
+    <section class="section payment-methods">
+      <h2>Payment Methods</h2>
+      <p>
+        We accept Visa, MasterCard, American Express, PayPal, Apple Pay—and even Bitcoin.
+        All transactions are SSL-encrypted for your security.
+      </p>
+      <div class="payment-icons">
+        <img src="/static/images/visa.svg" alt="Visa"/>
+        <img src="/static/images/mastercard.svg" alt="MasterCard"/>
+        <img src="/static/images/amex.svg" alt="American Express"/>
+        <img src="/static/images/paypal.svg" alt="PayPal"/>
+        <img src="/static/images/apple-pay.svg" alt="Apple Pay"/>
+        <img src="/static/images/bitcoin.svg" alt="Bitcoin"/>
+      </div>
+    </section>
+
+  {# ───── Cart ───── #}
+  {% elif page == "cart" %}
+    <section class="section cart-section">
+      <h1>Your Cart</h1>
+      {% if items %}
+        <ul>
+          {% for itm in items %}
+            <li>{{ itm.name }} — ${{ "%.2f"|format(itm.price) }}</li>
+          {% endfor %}
+        </ul>
+        <p><strong>Total:</strong> ${{ "%.2f"|format(total) }}</p>
+        <button id="checkout">Checkout</button>
+        <script src="https://js.stripe.com/v3/"></script>
+        <script>
+          const stripe = Stripe("{{ stripe_pub }}");
+          document.getElementById("checkout").addEventListener("click", async () => {
+            const { id } = await fetch("/create-checkout-session", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: "{}"
+            }).then(r => r.json());
+            stripe.redirectToCheckout({ sessionId: id });
+          });
+        </script>
+      {% else %}
+        <p>Your cart is empty.</p>
+      {% endif %}
+    </section>
+
+  {# ───── Success ───── #}
+  {% elif page == "success" %}
+    <section class="section success-section">
+      <h1>🎉 Thank you!</h1>
+      <p>Your payment succeeded. We’ll email your order details shortly.</p>
+      <a href="/">Back to Home</a>
+    </section>
+
+  {# ───── Login ───── #}
+  {% elif page == "login" %}
+    <section class="form-section">
+      <h2>Login</h2>
+      <form method="post" action="/login" class="form">
+        <input type="text" name="username" placeholder="Username" required/>
+        <input type="password" name="password" placeholder="Password" required/>
+        <button type="submit">Login</button>
+      </form>
+    </section>
+
+  {# ───── Sign Up ───── #}
+  {% elif page == "signup" %}
+    <section class="form-section">
+      <h2>Sign Up</h2>
+      <form method="post" action="/signup" class="form">
+        <input type="text" name="first_name" placeholder="First Name" required/>
+        <input type="text" name="last_name" placeholder="Last Name" required/>
+        <input type="text" name="username" placeholder="Username" required/>
+        <input type="password" name="password" placeholder="Password" required/>
+        <input type="password" name="confirm_password" placeholder="Confirm Password" required/>
+        <button type="submit">Create Account</button>
+      </form>
+    </section>
+
+  {# ───── Dashboard ───── #}
+  {% elif page == "dashboard" %}
+    <section class="dashboard">
+      <h2>Welcome back, {{ user.first_name or user.username }}</h2>
+      <div class="quick-links">
+        <a href="/verify-email">Verify Email</a>
+        <a href="/settings">Account Settings</a>
+      </div>
+    </section>
+
+  {# ───── Profile ───── #}
+  {% elif page == "profile" %}
+    <section class="profile">
+      <h2>Your Profile</h2>
+      <p><strong>Name:</strong> {{ user.first_name }} {{ user.last_name }}</p>
+      <p><strong>Username:</strong> {{ user.username }}</p>
+      <p><strong>Role:</strong> {{ user.is_admin and "Admin" or "User" }}</p>
+    </section>
+
+  {# ───── Add Gemstone (Admin) ───── #}
+  {% elif page == "admin_add" %}
+    <section class="form-section">
+      <h2>Add New Gemstone</h2>
+      <form method="post" action="/admin/add" enctype="multipart/form-data" class="form">
+        <input name="name" type="text" placeholder="Gemstone Name" required/>
+        <textarea name="description" placeholder="Description"></textarea>
+        <input name="price" type="number" step="0.01" placeholder="Price ($)" required/>
+        <input name="image" type="file" accept="image/*" required/>
+        <button type="submit">Add Gemstone</button>
+      </form>
+      <button type="button" id="suggest-seo-btn">Suggest SEO</button>
+      <div id="seo-suggestion" class="seo-output"></div>
+    </section>
+
+  {% endif %}
+</main>
+
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="footer-content">
+      <div>© {{ current_year }} IK Minerals</div>
+      <ul class="footer-links">
+        <li><a href="/about">About</a></li>
+        <li><a href="/contact">Contact</a></li>
+        <li><a href="/terms">Terms of Service</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <!-- CHATBOT -->
+  <div class="chatbot" id="chatbot">
+    <div class="chatbot-header">
+      <span>GemBot</span>
+      <span class="toggle-btn" id="toggleChat">–</span>
+    </div>
+    <div id="chatbotMessages" class="chatbot-body"></div>
+    <div class="chatbot-input">
+      <input type="text" id="chatInput" placeholder="Ask me anything… (type ‘tour’ for help)"/>
+      <button onclick="sendMessage()">Send</button>
+    </div>
+  </div>
+
+  <script>
+    // PROFILE dropdown on click
+    const profileItem = document.querySelector('.nav-item.profile');
+    if (profileItem) {
+      const avatar = profileItem.querySelector('.avatar');
+      avatar.addEventListener('click', e => {
+        e.stopPropagation();
+        profileItem.classList.toggle('open');
+      });
+      document.addEventListener('click', () => {
+        profileItem.classList.remove('open');
+      });
+    }
+
+    // TOUR MODAL
+    const tourModal = document.getElementById('tourModal');
+    if (tourModal) {
+      document.getElementById('tourYes').onclick = () => {
+        tourModal.style.display = 'none';
+        startTour();
+      };
+      document.getElementById('tourNo').onclick = () => {
+        tourModal.style.display = 'none';
+      };
+    }
+
+    // CHATBOT toggle
+    document.getElementById('toggleChat').onclick = () => {
+      const cb = document.getElementById('chatbot');
+      cb.classList.toggle('minimized');
+      document.getElementById('toggleChat').textContent =
+        cb.classList.contains('minimized') ? '+' : '–';
+    };
+
+    // AUTO-GREET + suggestion
+    document.addEventListener("DOMContentLoaded", () => {
+      const chat = document.getElementById("chatbotMessages");
+      chat.innerHTML += `<div class="bot">Welcome! Type “tour” for a guided walkthrough.</div>`;
+    });
+
+    // SITE TOUR
+    function startTour() {
+      const steps = [
+        "Browse gems on the Home page.",
+        "Sign up or log in to unlock your Dashboard.",
+        "Verify your email under Dashboard → Verify Email.",
+        "Manage your account in Account Settings.",
+        "Admins can add new gems via Dashboard → Add Gemstone.",
+        "Enjoy exploring IK Minerals!"
+      ];
+      let i = 0;
+      function next() {
+        if (i >= steps.length) return;
+        const chat = document.getElementById("chatbotMessages");
+        chat.innerHTML += `<div class="bot tour">${steps[i++]}</div>`;
+        chat.scrollTop = chat.scrollHeight;
+        setTimeout(next, 2500);
+      }
+      next();
+    }
+
+    // SEND MESSAGE
+    function sendMessage() {
+      const input = document.getElementById("chatInput");
+      const message = input.value.trim();
+      if (!message) return;
+      const chat = document.getElementById("chatbotMessages");
+      chat.innerHTML += `<div class="user">You: ${message}</div>`;
+      input.value = "";
+      fetch("/chatbot", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ question: message })
+      })
+      .then(res => res.json())
+      .then(data => {
+        chat.innerHTML += `<div class="bot">GemBot: ${data.answer}</div>`;
+        chat.scrollTop = chat.scrollHeight;
+      })
+      .catch(() => {
+        chat.innerHTML += `<div class="bot error">Error: please try again.</div>`;
+      });
+    }
+      // wire up the Suggest SEO button
+  const seoBtn = document.getElementById("suggest-seo-btn");
+  if (seoBtn) {
+    seoBtn.addEventListener("click", suggestContent);
+  }
+
+  // (optional) auto‑suggest on blur
+  ["name","description"].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener("blur", suggestContent);
+  });
+  </script>
+  <script>
+  // …existing JS above…
+
+  // Latest product modal
+  const latestModal = document.getElementById("latestModal");
+  if (latestModal) {
+    document.getElementById("closeLatest").onclick = () => {
+      latestModal.style.display = "none";
+    };
+    window.addEventListener("load", () => {
+      latestModal.style.display = "flex";
+    });
+  }
+</script>
+<script>
+  // Helper to read/write cart from localStorage
+  function getCart() {
+    return JSON.parse(localStorage.getItem('cart') || '[]');
+  }
+  function saveCart(cart) {
+    localStorage.setItem('cart', JSON.stringify(cart));
+  }
+
+  // Update the badge count
+  function updateCartCount() {
+    const count = getCart().length;
+    document.getElementById('cart-count').textContent = count;
+  }
+
+  // Add item to cart
+  function addToCart(itemId) {
+    const cart = getCart();
+    cart.push(itemId);
+    saveCart(cart);
+    updateCartCount();
+  }
+
+  // Buy now = go straight to checkout for one item
+  function buyNow(itemId) {
+    window.location.href = `/checkout?item_id=${itemId}`;
+  }
+
+  // Wire up buttons on each card
+  document.querySelectorAll('.card').forEach(card => {
+    const id = card.dataset.itemId;
+    const addBtn = card.querySelector('.add-to-cart');
+    const buyBtn = card.querySelector('.buy-now');
+
+    addBtn.addEventListener('click', () => addToCart(id));
+    buyBtn.addEventListener('click', () => buyNow(id));
+  });
+
+  // Initialize badge on load
+  window.addEventListener('DOMContentLoaded', updateCartCount);
+</script>
+<script>
+  // Add to Cart (unchanged)
+  document.querySelectorAll('.add-to-cart').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const id = btn.closest('.card').dataset.itemId;
+      const res = await fetch('/add-to-cart', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ item_id: id })
+      });
+      const { count } = await res.json();
+      document.getElementById('cart-count').textContent = count;
+    });
+  });
+
+  // Buy Now → use the mock checkout
+  document.querySelectorAll('.buy-now').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const id = btn.closest('.card').dataset.itemId;
+      await fetch('/checkout-mock', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ single_item: true, item_id: id })
+      });
+      window.location.href = '/success';
+    });
+  });
+
+  // Checkout (full cart) → use the mock checkout
+  const checkoutBtn = document.getElementById('checkout');
+  if (checkoutBtn) {
+    checkoutBtn.addEventListener('click', async () => {
+      await fetch('/checkout-mock', { method: 'POST', headers: {'Content-Type':'application/json'}, body: '{}' });
+      window.location.href = '/success';
+    });
+  }
+</script>
+
+<script>
+  // Toggle the sidebar
+  document.getElementById('cartToggle').addEventListener('click', e => {
+    e.preventDefault();
+    document.getElementById('cartSidebar').classList.toggle('open');
+    renderSidebarCart();
+  });
+  document.getElementById('closeCart').addEventListener('click', () => {
+    document.getElementById('cartSidebar').classList.remove('open');
+  });
+
+  // Fetch the current cart from the server and render
+  async function renderSidebarCart() {
+    const res = await fetch('/cart-data'); // we'll create this next
+    const { items, total } = await res.json();
+    const list = document.getElementById('sidebarCartItems');
+    list.innerHTML = items.map(i => `<li>${i.name} — $${i.price.toFixed(2)}</li>`).join('');
+    document.getElementById('sidebarCartTotal').textContent = total.toFixed(2);
+    document.getElementById('cart-count').textContent = items.length;
+  }
+
+  // Wire up your “Checkout” button
+  document.getElementById('checkoutSidebar').onclick = () => {
+    window.location.href = '/checkout'; 
+  };
+</script>
+
+</body>
+</html>

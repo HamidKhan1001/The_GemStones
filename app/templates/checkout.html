@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Checkout — IK Minerals</title>
+
+  <style>
+    body { font-family: sans-serif; margin:0; padding:0; }
+    .navbar { background:#00502b; color:#fff; padding:0.75rem 1rem; display:flex; align-items:center; }
+    .navbar .logo { flex:1; font-weight:bold; }
+    .navbar a { color:#fff; margin-left:1rem; text-decoration:none; }
+    .container { padding:1rem; }
+    .cart-table { width:100%; border-collapse: collapse; margin:1rem 0; }
+    .cart-table th, .cart-table td {
+      border:1px solid #ddd; padding:0.75rem; text-align:left;
+    }
+    .cart-table th { background:#f4f4f4; }
+    .total { font-size:1.25rem; margin-top:1rem; }
+    #payBtn {
+      background:#28a745; color:#fff; border:none;
+      padding:0.75rem 1.5rem; font-size:1rem;
+      border-radius:4px; cursor:pointer;
+    }
+    #payBtn:hover { background:#218838; }
+    .empty { margin:2rem 0; }
+    footer { text-align:center; padding:1rem 0; background:#f4f4f4; margin-top:2rem; }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="logo">IK Minerals</div>
+    <a href="/">Home</a>
+    <a href="/cart">Cart ({{ cart_count }})</a>
+  </nav>
+
+  <!-- MAIN CONTENT -->
+  <div class="container">
+    <h1>Your Cart</h1>
+
+    {% if items %}
+      <table class="cart-table">
+        <thead>
+          <tr>
+            <th>Gemstone</th>
+            <th>Price</th>
+            <th>Qty</th>
+            <th>Subtotal</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for gem, qty in items %}
+            <tr>
+              <td>{{ gem.name }}</td>
+              <td>${{ "%.2f"|format(gem.price) }}</td>
+              <td>{{ qty }}</td>
+              <td>${{ "%.2f"|format(gem.price * qty) }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <p class="total"><strong>Total:</strong> ${{ "%.2f"|format(total) }}</p>
+      <button id="payBtn">Pay Now</button>
+
+      <script>
+        document.getElementById('payBtn').addEventListener('click', async () => {
+          // mock payment: clear cart and go to success
+          await fetch('/checkout-mock', {
+            method: 'POST',
+            headers: { 'Content-Type':'application/json' },
+            body: '{}'
+          });
+          window.location.href = '/success';
+        });
+      </script>
+
+    {% else %}
+      <p class="empty">Your cart is empty. <a href="/">Continue shopping</a>.</p>
+    {% endif %}
+  </div>
+
+  <footer>© {{ current_year }} IK Minerals</footer>
+</body>
+</html>

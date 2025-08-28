@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Chat {{ room }}</title>
+  <link rel="stylesheet" href="{{ request.url_for('static', path='styles.css') }}"/>
+</head>
+<body>
+  <div class="chat-container">
+
+    <div class="chat-header">
+      {% if user and user.is_admin %}
+        <a href="{{ url_for('admin_chats') }}">← All Conversations</a>
+      {% endif %}
+      Chat: {{ room }}
+    </div>
+
+    <div id="msgs" class="chat-messages"></div>
+
+    <div class="chat-input">
+      <input id="txt" type="text" placeholder="Type a message…" autocomplete="off"/>
+      <button id="send">Send</button>
+    </div>
+
+  </div>
+
+  <script>
+    const ws = new WebSocket(
+      `${location.protocol === 'https:' ? 'wss' : 'ws'}://${location.host}/ws/chat/{{ room }}?token={{ user_token }}`
+    );
+
+    ws.onmessage = e => {
+      const m = JSON.parse(e.data);
+      const d = document.createElement("div");
+      d.className = "message";
+      d.innerHTML = `<span class="sender">${m.sender}:</span>${m.content}`;
+      document.getElementById("msgs").append(d);
+      document.getElementById("msgs").scrollTop = document.getElementById("msgs").scrollHeight;
+    };
+
+    document.getElementById("send").onclick = () => {
+      const input = document.getElementById("txt");
+      const content = input.value.trim();
+      if (!content) return;
+      ws.send(JSON.stringify({ content }));
+      input.value = "";
+    };
+  </script>
+</body>
+</html>

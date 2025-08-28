@@ -1,0 +1,78 @@
+# ── Python bytecode / caches ─────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+.pytest_cache/
+.mypy_cache/
+.pytype/
+.ruff_cache/
+.ipynb_checkpoints/
+
+# ── Virtual environments ─────────────────────────────────────────────────
+venv/
+.venv/
+env/
+.env/
+*/venv/
+*/.venv/
+*/env/
+*/.env/
+.python-version
+
+# ── Build / packaging artifacts ──────────────────────────────────────────
+build/
+dist/
+.eggs/
+*.egg
+*.egg-info/
+.wheelhouse/
+
+# ── Logs / runtime dumps ─────────────────────────────────────────────────
+*.log
+logs/
+tmp/
+*.pid
+
+# ── Environment & secrets ────────────────────────────────────────────────
+*.env
+*.env.*         # .env.local, .env.production, etc.
+.envrc
+*.pem
+*.key
+
+# ── Databases / local state ──────────────────────────────────────────────
+*.db
+*.sqlite
+*.sqlite3
+alembic.ini.bak
+
+# ── Reports / exports (generated at runtime) ─────────────────────────────
+data/
+exports/
+reports/
+*.xlsx
+*.csv
+
+# ── Static uploads (keep folder, ignore files) ───────────────────────────
+app/static/uploads/**
+!app/static/uploads/.gitkeep
+
+# ── Node / tooling (if you add a small frontend build) ───────────────────
+node_modules/
+.npm/
+.yarn/
+.pnpm-store/
+*.tsbuildinfo
+
+# ── Editors / OS files ───────────────────────────────────────────────────
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# ── Coverage / docs build ────────────────────────────────────────────────
+.coverage
+htmlcov/
+.site/
